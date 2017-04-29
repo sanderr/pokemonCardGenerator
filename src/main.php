@@ -6,6 +6,7 @@ require_once("Resistance.php");
 require_once("Evolution.php");
 require_once("Attack.php");
 require_once("Pokemon.php");
+require_once("Image.php");
 
 function createType($name) {
 	return new Type($name);
@@ -28,12 +29,10 @@ foreach($card_config_files as $config_file) {
 		$type = new Type($section_general["type"]);
 		$hitpoints = (int) $section_general["hitpoints"];
 		$retreat_cost = (int) $section_general["retreat_cost"];
-		//$image_file = $card_config_directory . "/" . $section_general["image_file"];
-		$image_file = $section_general["image_file"];
+		$image_file = new Image($card_config_directory, $section_general["image_file"]);
 		$weakness = new Weakness(new Type($section_general["weakness_type"]), $section_general["weakness_impact"]);
 		$resistance = new Resistance(new Type($section_general["resistance_type"]), $section_general["resistance_impact"]);
-		//$evolution = new Evolution($section_evolution["evolution_stage"], $section_evolution["evolves_from"], $card_config_directory . "/" . $section_evolution["evolution_image_file"]);
-		$evolution = new Evolution($section_evolution["evolution_stage"], $section_evolution["evolves_from"], $section_evolution["evolution_image_file"]);
+		$evolution = new Evolution($section_evolution["evolution_stage"], $section_evolution["evolves_from"], new Image($card_config_directory, $section_evolution["evolution_image_file"]));
 		if ($section_attacks["attack_one_energy"]) {
 			$section_one_energies = array_map("createType", explode(",", $section_attacks["attack_one_energy"]));
 		} else {

@@ -10,9 +10,6 @@ class Evolution {
 		} else {
 			$this->evolves_from = $evolves_from;
 			$this->evolution_image_file = $evolution_image_file;
-			if ($evolution_image_file && ! file_exists($evolution_image_file)) {
-				throw new Exception("Evolution image file " . $evolution_image_file . " does not exist");
-			}
 		}
 	}
 

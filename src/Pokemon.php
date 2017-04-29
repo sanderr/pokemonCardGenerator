@@ -13,9 +13,6 @@ class Pokemon {
 		$this->attack_two = $attack_two;
 		$this->retreat_cost = $retreat_cost;
 		$this->image = $image;
-		if ($this->image && ! file_exists($this->image)) {
-			throw new Exception("Image file " . $this->image . " does not exist");
-		}
 		$this->initializeSession();
 	}
 
@@ -92,19 +89,20 @@ class Pokemon {
 		$post_data["background"] = $this->getType()->getShortName();
 		$post_data["niveau"] = $this->getEvolution()->getStageString();
 		$post_data["evolution"] = $this->getEvolution()->getPrevious();
-		if ($this->getEvolution()->getPreviousImage()) {
+		if ($this->getEvolution()->getPreviousImage()->getPath()) {
 			// upload file
-			$filename = $this->getEvolution()->getPreviousImage();
+			$filename = $this->getEvolution()->getPreviousImage()->getName();
 			$img_post_data = array();
-			$img_post_data["fileToUpload"] = new CURLFile($filename, "image/jpeg", $filename);
+			$img_post_data["fileToUpload"] = new CURLFile($this->getEvolution()->getPreviousImage()->getPath(), "image/jpeg", $filename);
 			$session = curl_init(self::URL . "my/doajaxfileupload.php?id=fileToUpload");
 			curl_setopt($session, CURLOPT_COOKIE, self::SESSION_COOKIE_NAME . "=" . $this->session_id);
 			curl_setopt($session, CURLOPT_POST, true);
 			curl_setopt($session, CURLOPT_POSTFIELDS, $img_post_data);
-			curl_exec($session);
+			curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+			$resp = curl_exec($session);
 			curl_close($session);
-			$post_data["image_file"] = $filename;
-			$post_data["evol_image_file"] = $filename;
+			preg_match_all("/^filename:\s*'([^']*)',$/m", $resp, $matches);
+			$post_data["evol_image_file"] = $matches[1][0];
 		}
 		$post_data["name"] = $this->getName();
 		$post_data["attaque1"] = $this->getAttackOne()->getName();
@@ -113,18 +111,20 @@ class Pokemon {
 		$post_data["attaque2"] = $this->getAttackTwo()->getName();
 		$post_data["attaque2_desc"] = $this->getAttackTwo()->getDescription();
 		$post_data["degats2"] = $this->getAttackTwo()->getDamage();
-		if ($this->getImage()) {
+		if ($this->getImage()->getPath()) {
 			// upload file
-			$filename = $this->getImage();
+			$filename = $this->getImage()->getName();
 			$img_post_data = array();
-			$img_post_data["fileToUpload"] = new CURLFile($filename, "image/jpeg", $filename);
+			$img_post_data["fileToUpload"] = new CURLFile($this->getImage()->getPath(), "image/jpeg", $filename);
 			$session = curl_init(self::URL . "my/doajaxfileupload.php?id=fileToUpload");
 			curl_setopt($session, CURLOPT_COOKIE, self::SESSION_COOKIE_NAME . "=" . $this->session_id);
 			curl_setopt($session, CURLOPT_POST, true);
 			curl_setopt($session, CURLOPT_POSTFIELDS, $img_post_data);
-			curl_exec($session);
+			curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+			$resp = curl_exec($session);
 			curl_close($session);
-			$post_data["image_file"] = $filename;
+			preg_match_all("/^filename:\s*'([^']*)',$/m", $resp, $matches);
+			$post_data["image_file"] = $matches[1][0];
 		}
 		$post_data["points_vie"] = $this->getHitpoints();
 		$energiesOne = $this->getAttackOne()->getRequiredEnergies();
@@ -144,6 +144,7 @@ class Pokemon {
 		$post_data["resistance"] = $this->getResistance()->getType()->getShortName();
 		$post_data["resistance_opt"] = $this->getResistance()->getBonus();
 		$post_data["retraite"] = $this->getRetreatCost();
+		var_dump($post_data);
 
 		// send update POST request
 		$session = curl_init(self::URL . "update.php");
