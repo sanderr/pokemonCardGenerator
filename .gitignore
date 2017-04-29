@@ -1,0 +1,7 @@
+*.jpg
+in/
+!in/example.jpg
+!in/example2.jpg
+cards/
+*.poke.ini
+!config/example.poke.ini
