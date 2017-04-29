@@ -19,7 +19,6 @@ $card_output_directory = $global_config["card_output_directory"];
 $card_config_files = glob($card_config_directory . "/*.ini");
 foreach($card_config_files as $config_file) {
 	try {
-		//TODO: check all fields before getting them
 		$config = parse_ini_file($config_file, true);
 		$section_general = $config["general"];
 		$section_evolution = $config["evolution"];

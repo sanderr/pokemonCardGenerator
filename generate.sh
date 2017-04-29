@@ -1,0 +1,2 @@
+cd src
+./generate.php

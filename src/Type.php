@@ -9,6 +9,9 @@ class Type {
 	private function setShortName($name) {
 		$short_name = $name;
 		switch ($name) {
+			case "":
+				$short_name = "";
+				break;
 			case "Fire":
 			case "fire":
 				$short_name = "feu";
