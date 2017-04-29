@@ -6,11 +6,10 @@ class Evolution {
 		$this->setStage($evolution_stage);
 		if ($this->getStage() === 0) {
 			$this->evolves_from = "";
-			$this->evolution_image_file = "";
 		} else {
 			$this->evolves_from = $evolves_from;
-			$this->evolution_image_file = $evolution_image_file;
 		}
+		$this->evolution_image_file = $evolution_image_file;
 	}
 
 	private function setStage($stageString) {

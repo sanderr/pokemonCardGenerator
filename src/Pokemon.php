@@ -144,7 +144,6 @@ class Pokemon {
 		$post_data["resistance"] = $this->getResistance()->getType()->getShortName();
 		$post_data["resistance_opt"] = $this->getResistance()->getBonus();
 		$post_data["retraite"] = $this->getRetreatCost();
-		var_dump($post_data);
 
 		// send update POST request
 		$session = curl_init(self::URL . "update.php");
