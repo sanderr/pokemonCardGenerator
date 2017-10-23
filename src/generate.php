@@ -15,6 +15,7 @@ function createType($name) {
 $global_config = parse_ini_file("config.ini");
 $card_config_directory = $global_config["card_config_directory"];
 $card_output_directory = $global_config["card_output_directory"];
+mkdir($card_output_directory);
 
 $card_config_files = glob($card_config_directory . "/*.ini");
 foreach($card_config_files as $config_file) {
